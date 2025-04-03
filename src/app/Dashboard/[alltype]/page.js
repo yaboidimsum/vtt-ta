@@ -104,18 +104,18 @@ async function Page({ params }) {
         </div>
       </div>
       {counter === 20 ? (
-        <div className="grid w-[50%] gap-1.5">
+        <div className="grid w-[50%] gap-1.5 px-10">
           <Label htmlFor="message" className={`text-lg`}>
             Berdasarkan 20 pertanyaan yang telah Anda jawab, Apa pendapat Anda
             mengenai kualitas asli dan palsu dari sel L1?
           </Label>
-          <div className="flex flex-col gap-12">
+          <div className="flex w-full flex-col gap-12">
             <Textarea
               className={`h-16`}
               placeholder="Type your message here."
               id="message"
             />
-            <Button disabled children="Submit" />
+            <Button disabled>Submit</Button>
           </div>
         </div>
       ) : (

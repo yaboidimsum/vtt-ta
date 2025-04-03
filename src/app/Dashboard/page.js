@@ -43,8 +43,8 @@ const Page = () => {
                     penguji dengan resolusi 256 x 256.
                   </li>
                   <li>
-                    2. Anda hanya akan diberikan satu pertanyaan: "Apakah gambar
-                    ini nyata?"
+                    2. Anda hanya akan diberikan satu pertanyaan: &quot;Apakah
+                    gambar ini nyata?&quot;
                   </li>
                   <li>
                     3. Jawaban Anda akan selalu valid berdasarkan perspektif
@@ -73,17 +73,19 @@ const Page = () => {
           </Dialog>
         </div>
         <div className="flex gap-20">
-          <Link href={`/dashboard`}>
+          <Link href={`/dashboard/L1`}>
             <div className={boxClassName}>L1</div>
           </Link>
-          <Link href={`/dashboard`}>
+          <Link href={`/dashboard/L2`}>
             <div className={boxClassName}>L2</div>
           </Link>
-          <Link href={`/dashboard`}>
+          <Link href={`/dashboard/L3`}>
             <div className={boxClassName}>L3</div>
           </Link>
         </div>
-        <Button disabled className={`cursor-pointer`} children="Finish Task" />
+        <Button disabled className={`cursor-pointer`}>
+          Finish Task
+        </Button>
       </div>
     </main>
   );
