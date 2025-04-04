@@ -15,8 +15,8 @@ async function getRandomImages(cellType, count = 20) {
     const fakeImages = await fs.readdir(fakeImagesDir);
 
     // Ensure we get exactly 10 real and 10 fake images
-    const realCount = Math.min(realImages.length, 10);
-    const fakeCount = Math.min(fakeImages.length, 10);
+    // const realCount = Math.min(realImages.length, 10);
+    // const fakeCount = Math.min(fakeImages.length, 10);
 
     // Randomly select images if we have more than needed
     let selectedRealImages = realImages;

@@ -122,7 +122,7 @@ export default function QuestionClient({ cellType, serializedImages }) {
 
   return (
     <main className="flex h-screen flex-col items-center justify-center gap-10">
-      <div className="flex w-full items-center justify-around outline-2 outline-red-400">
+      <div className="flex w-full items-center justify-around">
         <div className={`${divStyle} flex-1`}>
           <span>Current Task</span>
           <Badge
@@ -224,7 +224,7 @@ export default function QuestionClient({ cellType, serializedImages }) {
         </div>
       ) : (
         <div className="flex flex-col gap-10">
-          <div className="rounded-lg outline-2 outline-red-400">
+          <div className="rounded-lg ">
             <Image
               className="rounded-lg object-fill"
               alt={`${cellType} cell image`}

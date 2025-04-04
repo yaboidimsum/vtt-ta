@@ -13,14 +13,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import { CircleHelpIcon } from "lucide-react";
 
 export default function Dashboard() {
-  const {
-    supervisor,
-    tester,
-    getTestResults,
-  } = useContext(UserContext);
+  const { supervisor, tester, getTestResults } = useContext(UserContext);
 
   // Add loading state to handle initial render
   const [isLoading, setIsLoading] = useState(true);
@@ -42,34 +48,11 @@ export default function Dashboard() {
   const l2Results = !isLoading ? getTestResults("L2") : null;
   const l3Results = !isLoading ? getTestResults("L3") : null;
 
-  // const handleExport = () => {
-  //   if (isLoading) return;
-
-  //   const results = exportAllResults();
-  //   const dataStr =
-  //     "data:text/json;charset=utf-8," +
-  //     encodeURIComponent(JSON.stringify(results, null, 2));
-  //   const downloadAnchorNode = document.createElement("a");
-  //   downloadAnchorNode.setAttribute("href", dataStr);
-  //   downloadAnchorNode.setAttribute(
-  //     "download",
-  //     `vtt_results_${tester.replace(/\s+/g, "_")}.json`
-  //   );
-  //   document.body.appendChild(downloadAnchorNode);
-  //   downloadAnchorNode.click();
-  //   downloadAnchorNode.remove();
-  // };
-
-  // // Handle reset and redirect to landing page
-  // const handleReset = () => {
-  //   if (isLoading) return;
-
-  //   // Reset all test data
-  //   resetAllTestData();
-
-  //   // Redirect to landing page
-  //   router.push("/");
-  // };
+  // Check if all tests are completed
+  const allTestsCompleted = 
+    l1Results?.completed && 
+    l2Results?.completed && 
+    l3Results?.completed;
 
   // Show loading state
   if (isLoading) {
@@ -81,8 +64,60 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8 py-10 outline-2 outline-red-500">
+    <div className="flex flex-col items-center justify-center gap-8 py-10">
       <h1 className="mb-8 text-3xl font-bold">Visual Turing Test Dashboard</h1>
+      <div className="flex justify-items-center gap-2">
+        <span className="text-zinc-500">Instruction</span>
+        <Dialog>
+          <DialogTrigger>
+            <CircleHelpIcon
+              size={20}
+              className="cursor-pointer text-zinc-500 transition ease-in-out hover:text-zinc-900"
+            />
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Guidance</DialogTitle>
+              <DialogDescription>
+                Panduan ini akan memandu Anda tentang cara menjawab
+                pertanyaan-pertanyaan yang akan dikerjakan.
+              </DialogDescription>
+            </DialogHeader>
+            <div>
+              <ol className="[&>li]:pb-2.5">
+                <li>
+                  1. Gambar semua sel (L1, L2, L3) akan ditampilkan kepada
+                  penguji dengan resolusi 256 x 256.
+                </li>
+                <li>
+                  2. Anda hanya akan diberikan satu pertanyaan: &quot;Apakah
+                  gambar ini nyata?&quot;
+                </li>
+                <li>
+                  3. Jawaban Anda akan selalu valid berdasarkan perspektif Anda.
+                </li>
+                <li>
+                  4. Setiap kelas (L1, L2, L3) akan memiliki 20 pertanyaan,
+                  sehingga total ada 60 pertanyaan.
+                </li>
+                <li>
+                  5. Tidak ada batasan waktu untuk menjawab, jadi silakan
+                  luangkan waktu Anda!
+                </li>
+                <li>
+                  6. Seorang pengawas akan tersedia untuk membimbing Anda jika
+                  Anda memiliki pertanyaan atau kebingungan.
+                </li>
+              </ol>
+            </div>
+            <DialogClose>
+              <div className="cursor-pointer rounded-md bg-zinc-900 p-2 text-white">
+                <h2>I understand</h2>
+              </div>
+            </DialogClose>
+          </DialogContent>
+        </Dialog>
+      </div>
 
       <div className="mb-10 grid w-full grid-cols-1 gap-6 px-10 md:grid-cols-3">
         <TestCard cellType="L1" results={l1Results} />
@@ -91,12 +126,10 @@ export default function Dashboard() {
       </div>
 
       <div className="flex justify-end gap-4">
-        {/* <Button onClick={handleExport}>Export Results</Button>
-        <Button onClick={handleReset} variant="destructive">
-          Reset All Data
-        </Button> */}
         <Link href={"/thankyou"}>
-          <Button>Finish Task</Button>
+          <Button disabled={!allTestsCompleted}>
+            {allTestsCompleted ? "Finish Task" : "Complete All Tests First"}
+          </Button>
         </Link>
       </div>
     </div>
