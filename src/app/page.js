@@ -15,12 +15,6 @@ const Page = () => {
       </div>
       <div>
         <div className="flex gap-8">
-          <Link href={`/dashboard`}>
-            <Button className={`cursor-pointer`}>
-              <Rocket />
-              Start
-            </Button>
-          </Link>
           <DialogSign />
         </div>
       </div>

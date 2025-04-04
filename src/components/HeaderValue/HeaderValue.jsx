@@ -10,11 +10,15 @@ function HeaderValue() {
     <>
       <div className="flex gap-2 text-base">
         <h2 className="font-bold">Supervisor:</h2>
-        <span>{supervisor}</span>
+        <span>
+          {supervisor ? supervisor : <h2 className="text-zinc-400">Empty</h2>}
+        </span>
       </div>
       <div className="flex gap-2 text-base">
         <h2 className="font-bold">Current Tester:</h2>
-        <span>{tester}</span>
+        <span>
+          {tester ? tester : <h2 className="text-zinc-400">Empty</h2>}
+        </span>
       </div>
     </>
   );
