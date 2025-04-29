@@ -25,6 +25,9 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { CircleHelpIcon } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function Dashboard() {
   const { supervisor, tester, getTestResults } = useContext(UserContext);
 
@@ -49,10 +52,8 @@ export default function Dashboard() {
   const l3Results = !isLoading ? getTestResults("L3") : null;
 
   // Check if all tests are completed
-  const allTestsCompleted = 
-    l1Results?.completed && 
-    l2Results?.completed && 
-    l3Results?.completed;
+  const allTestsCompleted =
+    l1Results?.completed && l2Results?.completed && l3Results?.completed;
 
   // Show loading state
   if (isLoading) {
