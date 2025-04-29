@@ -26,7 +26,6 @@ import { Progress } from "@/components/ui/progress";
 import { CircleHelpIcon } from "lucide-react";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 export default function Dashboard() {
   const { supervisor, tester, getTestResults } = useContext(UserContext);
