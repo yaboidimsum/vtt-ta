@@ -7,25 +7,27 @@ import QuestionClient from "@/components/QuestionClient";
 async function getRandomImages(cellType, count = 20) {
   try {
     // Define paths for real and fake images
-    // const realImagesDir = path.join(
-    //   process.cwd(),
-    //   "public",
-    //   cellType.toLowerCase(),
-    //   "real"
-    // );
-    // const fakeImagesDir = path.join(
-    //   process.cwd(),
-    //   "public",
-    //   cellType.toLowerCase(),
-    //   "fake"
-    // );
+    const realImagesDir = path.join(
+      // process.cwd(),
+      // "public",
+      '../',
+      cellType.toLowerCase(),
+      "real"
+    );
+    const fakeImagesDir = path.join(
+      // process.cwd(),
+      // "public",
+      '../',
+      cellType.toLowerCase(),
+      "fake"
+    );
 
     // Read directory contents
-    // const realImages = await fs.readdir(realImagesDir);
-    // const fakeImages = await fs.readdir(fakeImagesDir);
+    const realImages = await fs.readdir(realImagesDir);
+    const fakeImages = await fs.readdir(fakeImagesDir);
 
-    const realImages = path.resolve(`../${cellType.toLowerCase()}/real`);
-    const fakeImages = path.resolve(`..t/${cellType.toLowerCase()}/fake`);
+    // const realImages = path.resolve(`../${cellType.toLowerCase()}/real`);
+    // const fakeImages = path.resolve(`..t/${cellType.toLowerCase()}/fake`);
 
     // Ensure we get exactly 10 real and 10 fake images
     // const realCount = Math.min(realImages.length, 10);
@@ -45,12 +47,12 @@ async function getRandomImages(cellType, count = 20) {
 
     // Create arrays with full paths and isReal flag
     const realImageData = selectedRealImages.map((img) => ({
-      path: `../${cellType.toLowerCase()}/real/${img}`,
+      path: `../${cellType.toLowerCase()}/real/image_${img}.jpg`,
       isReal: true,
     }));
 
     const fakeImageData = selectedFakeImages.map((img) => ({
-      path: `../${cellType.toLowerCase()}/fake/${img}`,
+      path: `../${cellType.toLowerCase()}/fake/image_${img}.jpg`,
       isReal: false,
     }));
 
