@@ -3,15 +3,15 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     unoptimized: true,
-    domains: ['localhost'],
+    domains: ["localhost"],
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**',
+        protocol: "https",
+        hostname: "**",
       },
     ],
   },
-  assetPrefix: '',
+  assetPrefix: "",
 };
 
 export default nextConfig;

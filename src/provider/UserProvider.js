@@ -321,10 +321,10 @@ function UserProvider({ children }) {
       } else {
         // Create arrays for real and fake images (fallback)
         const realImages = Array(10)
-          .fill(0)
+          .fill(null)
           .map((_, i) => `/${cellType}/real/image_${i + 1}.jpg`);
         const fakeImages = Array(10)
-          .fill(0)
+          .fill(null)
           .map((_, i) => `/${cellType}/fake/image_${i + 1}.jpg`);
 
         // Combine and shuffle

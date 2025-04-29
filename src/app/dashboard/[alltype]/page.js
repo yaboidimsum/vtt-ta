@@ -7,8 +7,18 @@ import QuestionClient from "@/components/QuestionClient";
 async function getRandomImages(cellType, count = 20) {
   try {
     // Define paths for real and fake images
-    const realImagesDir = path.join(process.cwd(), "public", cellType, "real");
-    const fakeImagesDir = path.join(process.cwd(), "public", cellType, "fake");
+    const realImagesDir = path.join(
+      process.cwd(),
+      "public",
+      cellType.toLowerCase(),
+      "real"
+    );
+    const fakeImagesDir = path.join(
+      process.cwd(),
+      "public",
+      cellType.toLowerCase(),
+      "fake"
+    );
 
     // Read directory contents
     const realImages = await fs.readdir(realImagesDir);
@@ -32,12 +42,12 @@ async function getRandomImages(cellType, count = 20) {
 
     // Create arrays with full paths and isReal flag
     const realImageData = selectedRealImages.map((img) => ({
-      path: `/${cellType}/real/${img}`,
+      path: `/${cellType.toLowerCase()}/real/${img}`,
       isReal: true,
     }));
 
     const fakeImageData = selectedFakeImages.map((img) => ({
-      path: `/${cellType}/fake/${img}`,
+      path: `/${cellType.toLowerCase()}/fake/${img}`,
       isReal: false,
     }));
 
@@ -71,7 +81,7 @@ export default async function Page({ params }) {
   const { alltype } = await params;
 
   // Get random images for this cell type
-  const images = await getRandomImages(alltype);
+  const images = await getRandomImages(alltype.toLowerCase());
 
   // Serialize the data to pass to the client component
   const serializedImages = JSON.stringify(images);
