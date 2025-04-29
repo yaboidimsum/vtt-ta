@@ -6,32 +6,35 @@ import QuestionClient from "@/components/QuestionClient";
 // Function to get random images for a specific cell type
 async function getRandomImages(cellType, count = 20) {
   try {
-    // Define paths for real and fake images
-    const realImagesDir = path.join(
-      // process.cwd(),
-      // "public",
-      '../',
-      cellType.toLowerCase(),
-      "real"
-    );
-    const fakeImagesDir = path.join(
-      // process.cwd(),
-      // "public",
-      '../',
-      cellType.toLowerCase(),
-      "fake"
-    );
+    // // Define paths for real and fake images
+    // const realImagesDir = path.join(
+    //   // process.cwd(),
+    //   // "public",
+    //   '../',
+    //   cellType.toLowerCase(),
+    //   "real"
+    // );
+    // const fakeImagesDir = path.join(
+    //   // process.cwd(),
+    //   // "public",
+    //   '../',
+    //   cellType.toLowerCase(),
+    //   "fake"
+    // );
 
-    // Read directory contents
-    const realImages = await fs.readdir(realImagesDir);
-    const fakeImages = await fs.readdir(fakeImagesDir);
+    // // Read directory contents
+    // const realImages = await fs.readdir(realImagesDir);
+    // const fakeImages = await fs.readdir(fakeImagesDir);
 
-    // const realImages = path.resolve(`../${cellType.toLowerCase()}/real`);
-    // const fakeImages = path.resolve(`..t/${cellType.toLowerCase()}/fake`);
+    const realImagesPath = path.resolve(`../${cellType.toLowerCase()}/real`);
+    const fakeImagesPath = path.resolve(`../${cellType.toLowerCase()}/fake`);
 
     // Ensure we get exactly 10 real and 10 fake images
     // const realCount = Math.min(realImages.length, 10);
     // const fakeCount = Math.min(fakeImages.length, 10);
+
+    const realImages = await fs.readdir(realImagesPath);
+    const fakeImages = await fs.readdir(fakeImagesPath);
 
     // Randomly select images if we have more than needed
     let selectedRealImages = realImages;
