@@ -8,4 +8,7 @@
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200 
+  status = 200
+
+[functions]
+  included_files = ["node_modules/**/*"] 
