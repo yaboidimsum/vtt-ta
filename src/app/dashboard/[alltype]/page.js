@@ -4,7 +4,7 @@ import path from "path";
 import QuestionClient from "@/components/QuestionClient";
 
 // Function to get random images for a specific cell type
-async function getRandomImages(cellType, count = 20) {
+function getRandomImages(cellType, count = 20) {
   try {
     // Define paths for real and fake images
     // const realImagesDir = path.join(
@@ -35,8 +35,8 @@ async function getRandomImages(cellType, count = 20) {
     // const fakeCount = Math.min(fakeImages.length, 10);
 
     // Randomly select images if we have more than needed
-    let selectedRealImages = await fs.readdir(realImages);
-    let selectedFakeImages = await fs.readdir(fakeImages);
+    let selectedRealImages = fs.readdir(realImages);
+    let selectedFakeImages = fs.readdir(fakeImages);
 
     if (realImages.length > 10) {
       selectedRealImages = shuffleArray([...realImages]).slice(0, 10);
