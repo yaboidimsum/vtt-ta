@@ -7,8 +7,9 @@
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/.netlify/functions/nextjs-server"
   status = 200
+  force = true
 
 [functions]
   included_files = ["node_modules/**/*"] 
