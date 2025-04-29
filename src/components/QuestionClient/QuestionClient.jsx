@@ -226,11 +226,14 @@ export default function QuestionClient({ cellType, serializedImages }) {
         <div className="flex flex-col gap-10">
           <div className="rounded-lg ">
             <Image
-              className="rounded-lg object-fill"
+              className="mx-auto mb-8 h-64 w-64 rounded-lg object-cover"
               alt={`${cellType} cell image`}
               src={currentImage.path}
-              width={512}
-              height={512}
+              width={256}
+              height={256}
+              priority
+              unoptimized
+              loader={({ src }) => src}
             />
           </div>
           <div className="flex flex-col items-center justify-center gap-10">
