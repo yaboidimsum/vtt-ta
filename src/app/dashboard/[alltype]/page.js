@@ -24,8 +24,8 @@ async function getRandomImages(cellType, count = 20) {
     // const realImages = await fs.readdir(realImagesDir);
     // const fakeImages = await fs.readdir(fakeImagesDir);
 
-    const realImages = path.resolve(`./.next/${cellType.toLowerCase()}/real`);
-    const fakeImages = path.resolve(`./.next/${cellType.toLowerCase()}/fake`);
+    const realImages = path.resolve(`../${cellType.toLowerCase()}/real`);
+    const fakeImages = path.resolve(`..t/${cellType.toLowerCase()}/fake`);
 
     // Ensure we get exactly 10 real and 10 fake images
     // const realCount = Math.min(realImages.length, 10);
@@ -45,12 +45,12 @@ async function getRandomImages(cellType, count = 20) {
 
     // Create arrays with full paths and isReal flag
     const realImageData = selectedRealImages.map((img) => ({
-      path: `./.next/${cellType.toLowerCase()}/real/${img}`,
+      path: `../${cellType.toLowerCase()}/real/${img}`,
       isReal: true,
     }));
 
     const fakeImageData = selectedFakeImages.map((img) => ({
-      path: `./.next/${cellType.toLowerCase()}/fake/${img}`,
+      path: `../${cellType.toLowerCase()}/fake/${img}`,
       isReal: false,
     }));
 
