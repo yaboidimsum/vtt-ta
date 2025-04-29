@@ -25,7 +25,7 @@ function getRandomImages(cellType, count = 20) {
     // const fakeImages = await fs.readdir(fakeImagesDir);
 
     const realImages = path.resolve(`../${cellType.toLowerCase()}/real`);
-    const fakeImages = path.resolve(`..t/${cellType.toLowerCase()}/fake`);
+    const fakeImages = path.resolve(`../${cellType.toLowerCase()}/fake`);
 
     // const realImages = fs.readdir(realImagesPath);
     // const fakeImages = fs.readdir(fakeImagesPath);
