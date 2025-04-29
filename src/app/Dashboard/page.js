@@ -27,7 +27,7 @@ import { CircleHelpIcon } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
-export default function Dashboard() {
+export default function DashboardPage() {
   const { supervisor, tester, getTestResults } = useContext(UserContext);
 
   // Add loading state to handle initial render
