@@ -42,12 +42,12 @@ async function getRandomImages(cellType, count = 20) {
 
     // Create arrays with full paths and isReal flag
     const realImageData = selectedRealImages.map((img) => ({
-      path: `/${cellType.toLowerCase()}/real/${img}`,
+      path: `./public/${cellType.toLowerCase()}/real/${img}`,
       isReal: true,
     }));
 
     const fakeImageData = selectedFakeImages.map((img) => ({
-      path: `/${cellType.toLowerCase()}/fake/${img}`,
+      path: `./public/${cellType.toLowerCase()}/fake/${img}`,
       isReal: false,
     }));
 
