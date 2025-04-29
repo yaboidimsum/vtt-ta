@@ -6,18 +6,33 @@ import QuestionClient from "@/components/QuestionClient";
 // Function to get random images for a specific cell type
 async function getRandomImages(cellType, count = 20) {
   try {
-    // Helper function to get images from a directory
-    const getImagesFromDirectory = async (type) => {
-      const dirPath = path.resolve(`../${cellType.toLowerCase()}/${type}`);
-      const files = await fs.readdir(dirPath);
-      return files.map(
-        (file) => `../${cellType.toLowerCase()}/${type}/${file}`
-      );
-    };
+    // Define paths for real and fake images
+    // const realImagesDir = path.join(
+    //   process.cwd(),
+    //   "public",
+    //   cellType.toLowerCase(),
+    //   "real"
+    // );
+    // const fakeImagesDir = path.join(
+    //   process.cwd(),
+    //   "public",
+    //   cellType.toLowerCase(),
+    //   "fake"
+    // );
 
-    // Get real and fake images
-    const realImages = await getImagesFromDirectory("real");
-    const fakeImages = await getImagesFromDirectory("fake");
+    // Read directory contents
+    // const realImages = await fs.readdir(realImagesDir);
+    // const fakeImages = await fs.readdir(fakeImagesDir);
+
+    const realImagesPath = path.resolve(`../${cellType.toLowerCase()}/real`);
+    const fakeImagesPath = path.resolve(`..t/${cellType.toLowerCase()}/fake`);
+
+    const realImages = fs.readdir(realImagesPath);
+    const fakeImages = fs.readdir(fakeImagesPath);
+
+    // Ensure we get exactly 10 real and 10 fake images
+    // const realCount = Math.min(realImages.length, 10);
+    // const fakeCount = Math.min(fakeImages.length, 10);
 
     // Randomly select images if we have more than needed
     let selectedRealImages = realImages;
@@ -32,13 +47,13 @@ async function getRandomImages(cellType, count = 20) {
     }
 
     // Create arrays with full paths and isReal flag
-    const realImageData = selectedRealImages.map((path) => ({
-      path,
+    const realImageData = selectedRealImages.map((img) => ({
+      path: `../${cellType.toLowerCase()}/real/${img}`,
       isReal: true,
     }));
 
-    const fakeImageData = selectedFakeImages.map((path) => ({
-      path,
+    const fakeImageData = selectedFakeImages.map((img) => ({
+      path: `../${cellType.toLowerCase()}/fake/${img}`,
       isReal: false,
     }));
 
