@@ -1,25 +1,50 @@
 import React from "react";
+import fs from "fs/promises";
 import path from "path";
 import QuestionClient from "@/components/QuestionClient";
 
 // Function to get random images for a specific cell type
-function getRandomImages(cellType, count = 20) {
+async function getRandomImages(cellType, count = 20) {
   try {
-    // Generate arrays for real and fake images
-    const realImagePaths = Array.from({ length: 10 }, (_, i) => ({
-      path: `../${cellType.toLowerCase()}/real/image_${i + 1}.jpg`,
+    // Define paths for real and fake images
+    const realImagesDir = path.join(process.cwd(), "public", cellType, "real");
+    const fakeImagesDir = path.join(process.cwd(), "public", cellType, "fake");
+
+    // Read directory contents
+    const realImages = await fs.readdir(realImagesDir);
+    const fakeImages = await fs.readdir(fakeImagesDir);
+
+    // Ensure we get exactly 10 real and 10 fake images
+    // const realCount = Math.min(realImages.length, 10);
+    // const fakeCount = Math.min(fakeImages.length, 10);
+
+    // Randomly select images if we have more than needed
+    let selectedRealImages = realImages;
+    let selectedFakeImages = fakeImages;
+
+    if (realImages.length > 10) {
+      selectedRealImages = shuffleArray([...realImages]).slice(0, 10);
+    }
+
+    if (fakeImages.length > 10) {
+      selectedFakeImages = shuffleArray([...fakeImages]).slice(0, 10);
+    }
+
+    // Create arrays with full paths and isReal flag
+    const realImageData = selectedRealImages.map((img) => ({
+      path: `/${cellType}/real/${img}`,
       isReal: true,
     }));
 
-    const fakeImagePaths = Array.from({ length: 10 }, (_, i) => ({
-      path: `../${cellType.toLowerCase()}/fake/image_${i + 1}.jpg`,
+    const fakeImageData = selectedFakeImages.map((img) => ({
+      path: `/${cellType}/fake/${img}`,
       isReal: false,
     }));
 
-    // Combine all images
-    const allImages = [...realImagePaths, ...fakeImagePaths];
+    // Combine and shuffle
+    const allImages = [...realImageData, ...fakeImageData];
 
-    // Shuffle all images
+    // Fisher-Yates shuffle algorithm
     return shuffleArray(allImages);
   } catch (error) {
     console.error("Error getting random images:", error);
@@ -42,11 +67,11 @@ function shuffleArray(array) {
   return newArray;
 }
 
-export default function Page({ params }) {
-  const { alltype } = params;
+export default async function Page({ params }) {
+  const { alltype } = await params;
 
   // Get random images for this cell type
-  const images = getRandomImages(alltype.toLowerCase());
+  const images = await getRandomImages(alltype);
 
   // Serialize the data to pass to the client component
   const serializedImages = JSON.stringify(images);

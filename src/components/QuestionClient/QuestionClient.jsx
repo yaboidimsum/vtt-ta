@@ -229,10 +229,10 @@ export default function QuestionClient({ cellType, serializedImages }) {
               className="mx-auto mb-8 h-64 w-64 rounded-lg object-cover"
               alt={`${cellType} cell image`}
               src={currentImage.path}
-              width={256}
-              height={256}
+              width={1024}
+              height={1024}
               priority
-              unoptimized
+              quality={1000}
               loader={({ src }) => src}
             />
           </div>
