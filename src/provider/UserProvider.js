@@ -116,16 +116,23 @@ function UserProvider({ children }) {
 
   // Save to localStorage when userData changes (but only after initial load)
   useEffect(() => {
-    // Skip the first render
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
+    // Skip if data hasn't been loaded yet
+    if (!isDataLoaded.current) {
       return;
     }
 
-    // Only save if data has been loaded from localStorage first
-    if (isDataLoaded.current && userData !== null) {
-      window.localStorage.setItem("userData", JSON.stringify(userData));
+    // Skip if userData is null
+    if (!userData) {
+      return;
     }
+
+    // Use a timeout to debounce frequent updates
+    const timeoutId = setTimeout(() => {
+      window.localStorage.setItem("userData", JSON.stringify(userData));
+    }, 300);
+
+    // Cleanup timeout on unmount or before next effect run
+    return () => clearTimeout(timeoutId);
   }, [userData]);
 
   const updateUserData = (field, value) => {
@@ -284,42 +291,35 @@ function UserProvider({ children }) {
   ) => {
     if (!userData) return;
 
-    // Check if we already have this data to prevent unnecessary updates
-    if (
-      externalImagePaths &&
-      externalCorrectAnswers &&
-      userData.testData[cellType].imagePaths.length ===
-        externalImagePaths.length &&
-      userData.testData[cellType].correctAnswers.length ===
-        externalCorrectAnswers.length
-    ) {
-      // Check if the data is the same
-      const pathsMatch = externalImagePaths.every(
-        (path, i) => userData.testData[cellType].imagePaths[i] === path
-      );
-
-      const answersMatch = externalCorrectAnswers.every(
-        (answer, i) => userData.testData[cellType].correctAnswers[i] === answer
-      );
-
-      // If both paths and answers match, no need to update
-      if (pathsMatch && answersMatch) {
-        return {
-          imagePaths: userData.testData[cellType].imagePaths,
-          correctAnswers: userData.testData[cellType].correctAnswers,
-        };
-      }
-    }
-
     try {
       let imagePaths, correctAnswers;
 
       if (externalImagePaths && externalCorrectAnswers) {
-        // Use the provided external data
-        imagePaths = externalImagePaths;
-        correctAnswers = externalCorrectAnswers;
+        // When using external data, randomly select 10 real and 10 fake images
+        const realImages = externalImagePaths.filter((_, i) => externalCorrectAnswers[i]);
+        const fakeImages = externalImagePaths.filter((_, i) => !externalCorrectAnswers[i]);
+
+        // Randomly select 10 from each category
+        const selectedReal = shuffleAndSelect(realImages, 10);
+        const selectedFake = shuffleAndSelect(fakeImages, 10);
+
+        // Combine and shuffle the final selection
+        const allImages = [
+          ...selectedReal.map(path => ({ path, isReal: true })),
+          ...selectedFake.map(path => ({ path, isReal: false }))
+        ];
+
+        // Fisher-Yates shuffle for final order
+        for (let i = allImages.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [allImages[i], allImages[j]] = [allImages[j], allImages[i]];
+        }
+
+        // Extract paths and correct answers
+        imagePaths = allImages.map(item => item.path);
+        correctAnswers = allImages.map(item => item.isReal);
       } else {
-        // Create arrays for real and fake images (fallback)
+        // Fallback behavior remains unchanged
         const realImages = Array(10)
           .fill(null)
           .map((_, i) => `/${cellType}/real/image_${i + 1}.jpg`);
@@ -327,19 +327,17 @@ function UserProvider({ children }) {
           .fill(null)
           .map((_, i) => `/${cellType}/fake/image_${i + 1}.jpg`);
 
-        // Combine and shuffle
         const allImages = [
           ...realImages.map((path) => ({ path, isReal: true })),
           ...fakeImages.map((path) => ({ path, isReal: false })),
         ];
 
-        // Fisher-Yates shuffle algorithm
+        // Fisher-Yates shuffle
         for (let i = allImages.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [allImages[i], allImages[j]] = [allImages[j], allImages[i]];
         }
 
-        // Extract paths and correct answers
         imagePaths = allImages.map((item) => item.path);
         correctAnswers = allImages.map((item) => item.isReal);
       }
@@ -368,6 +366,16 @@ function UserProvider({ children }) {
       console.error(`Error generating test data for ${cellType}:`, error);
       return null;
     }
+  };
+
+  // Helper function to shuffle and select n items from an array
+  const shuffleAndSelect = (array, n) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, n);
   };
 
   // Reset all test data
