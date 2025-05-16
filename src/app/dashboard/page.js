@@ -149,7 +149,7 @@ function TestCard({ cellType, results }) {
           {completed
             ? "Test completed"
             : answeredQuestions > 0
-            ? `${answeredQuestions}/20 questions answered`
+            ? `${answeredQuestions}/50 questions answered`
             : "Not started"}
         </CardDescription>
       </CardHeader>

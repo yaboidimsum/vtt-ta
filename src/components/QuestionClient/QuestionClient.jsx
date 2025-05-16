@@ -180,8 +180,8 @@ export default function QuestionClient({ cellType, serializedImages }) {
                     Anda.
                   </li>
                   <li>
-                    4. Setiap kelas (L1, L2, L3) akan memiliki 20 pertanyaan,
-                    sehingga total ada 60 pertanyaan.
+                    4. Setiap kelas (L1, L2, L3) akan memiliki 50 pertanyaan (25 nyata, 25 palsu),
+                    sehingga total ada 150 pertanyaan.
                   </li>
                   <li>
                     5. Tidak ada batasan waktu untuk menjawab, jadi silakan
@@ -260,3 +260,23 @@ export default function QuestionClient({ cellType, serializedImages }) {
     </main>
   );
 }
+
+// Get current question data
+  const getCurrentQuestion = (cellType) => {
+    if (!userData || !userData.testData || !userData.testData[cellType])
+      return null;
+
+    const { currentQuestion, imagePaths, answers } =
+      userData.testData[cellType];
+
+    if (!imagePaths || currentQuestion >= imagePaths.length) return null;
+
+    return {
+      questionNumber: currentQuestion + 1,
+      totalQuestions: imagePaths.length, // Use actual length instead of hardcoded 50
+      imagePath: imagePaths[currentQuestion],
+      answered: answers[currentQuestion] !== null,
+      userAnswer: answers[currentQuestion],
+      progress: (currentQuestion / imagePaths.length) * 100, // Use actual length
+    };
+  };

@@ -17,7 +17,7 @@ function UserProvider({ children }) {
     testData: {
       L1: {
         currentQuestion: 0,
-        answers: Array(20).fill(null), // User's answers (true=real, false=fake)
+        answers: Array(50).fill(null), // User's answers (true=real, false=fake)
         correctAnswers: [], // Will be populated with actual correct answers
         imagePaths: [],
         comment: "",
@@ -27,7 +27,7 @@ function UserProvider({ children }) {
       },
       L2: {
         currentQuestion: 0,
-        answers: Array(20).fill(null),
+        answers: Array(50).fill(null),
         correctAnswers: [],
         imagePaths: [],
         comment: "",
@@ -37,7 +37,7 @@ function UserProvider({ children }) {
       },
       L3: {
         currentQuestion: 0,
-        answers: Array(20).fill(null),
+        answers: Array(50).fill(null),
         correctAnswers: [],
         imagePaths: [],
         comment: "",
@@ -67,7 +67,7 @@ function UserProvider({ children }) {
           testData: {
             L1: {
               currentQuestion: 0,
-              answers: Array(20).fill(null),
+              answers: Array(50).fill(null),
               correctAnswers: [],
               imagePaths: [],
               comment: "",
@@ -78,7 +78,7 @@ function UserProvider({ children }) {
             },
             L2: {
               currentQuestion: 0,
-              answers: Array(20).fill(null),
+              answers: Array(50).fill(null),
               correctAnswers: [],
               imagePaths: [],
               comment: "",
@@ -89,7 +89,7 @@ function UserProvider({ children }) {
             },
             L3: {
               currentQuestion: 0,
-              answers: Array(20).fill(null),
+              answers: Array(50).fill(null),
               correctAnswers: [],
               imagePaths: [],
               comment: "",
@@ -218,6 +218,7 @@ function UserProvider({ children }) {
     }));
   };
 
+  // Get test results with additional metrics
   const getTestResults = (cellType) => {
     if (!userData || !userData.testData || !userData.testData[cellType])
       return null;
@@ -225,24 +226,59 @@ function UserProvider({ children }) {
     const testInfo = userData.testData[cellType];
     const { answers, correctAnswers } = testInfo;
 
-    // Calculate correct answers
+    // Calculate metrics
     let correctCount = 0;
     let answeredCount = 0;
+    
+    // Confusion matrix values
+    let truePositives = 0;
+    let trueNegatives = 0;
+    let falsePositives = 0;
+    let falseNegatives = 0;
 
     answers.forEach((answer, index) => {
       if (answer !== null) {
         answeredCount++;
         if (correctAnswers[index] === answer) {
           correctCount++;
+          
+          // Update confusion matrix
+          if (answer === true) {
+            truePositives++; // Correctly identified as real
+          } else {
+            trueNegatives++; // Correctly identified as fake
+          }
+        } else {
+          // Incorrect answers
+          if (answer === true) {
+            falsePositives++; // Incorrectly identified as real (was fake)
+          } else {
+            falseNegatives++; // Incorrectly identified as fake (was real)
+          }
         }
       }
     });
+
+    // Calculate metrics
+    const accuracy = answeredCount > 0 ? (correctCount / answeredCount) * 100 : 0;
+    const precision = (truePositives + falsePositives) > 0 ? (truePositives / (truePositives + falsePositives)) * 100 : 0;
+    const recall = (truePositives + falseNegatives) > 0 ? (truePositives / (truePositives + falseNegatives)) * 100 : 0;
+    const f1Score = (precision + recall) > 0 ? (2 * precision * recall) / (precision + recall) : 0;
 
     return {
       totalQuestions: answers.length,
       answeredQuestions: answeredCount,
       correctAnswers: correctCount,
-      accuracy: answeredCount > 0 ? (correctCount / answeredCount) * 100 : 0,
+      accuracy: accuracy,
+      precision: precision,
+      recall: recall,
+      f1Score: f1Score,
+      confusionMatrix: {
+        truePositives,
+        trueNegatives,
+        falsePositives,
+        falseNegatives
+      },
       progressPercentage: (answeredCount / answers.length) * 100,
       completed: testInfo.completed,
       startTime: testInfo.startTime,
@@ -264,6 +300,54 @@ function UserProvider({ children }) {
       testData,
     } = userData;
 
+    const l1Results = getTestResults("L1");
+    const l2Results = getTestResults("L2");
+    const l3Results = getTestResults("L3");
+    
+    // Calculate overall metrics
+    const results = {
+      L1: l1Results,
+      L2: l2Results,
+      L3: l3Results,
+    };
+    
+    // Calculate overall confusion matrix
+    const overallMatrix = {
+      truePositives: 0,
+      trueNegatives: 0,
+      falsePositives: 0,
+      falseNegatives: 0
+    };
+    
+    let totalCorrect = 0;
+    let totalAnswered = 0;
+    
+    Object.values(results).forEach(result => {
+      if (result) {
+        totalCorrect += result.correctAnswers || 0;
+        totalAnswered += result.answeredQuestions || 0;
+        
+        if (result.confusionMatrix) {
+          overallMatrix.truePositives += result.confusionMatrix.truePositives;
+          overallMatrix.trueNegatives += result.confusionMatrix.trueNegatives;
+          overallMatrix.falsePositives += result.confusionMatrix.falsePositives;
+          overallMatrix.falseNegatives += result.confusionMatrix.falseNegatives;
+        }
+      }
+    });
+    
+    // Calculate overall metrics
+    const overallAccuracy = totalAnswered > 0 ? (totalCorrect / totalAnswered) * 100 : 0;
+    const overallPrecision = (overallMatrix.truePositives + overallMatrix.falsePositives) > 0 
+      ? (overallMatrix.truePositives / (overallMatrix.truePositives + overallMatrix.falsePositives)) * 100 
+      : 0;
+    const overallRecall = (overallMatrix.truePositives + overallMatrix.falseNegatives) > 0 
+      ? (overallMatrix.truePositives / (overallMatrix.truePositives + overallMatrix.falseNegatives)) * 100 
+      : 0;
+    const overallF1 = (overallPrecision + overallRecall) > 0 
+      ? (2 * overallPrecision * overallRecall) / (overallPrecision + overallRecall) 
+      : 0;
+
     return {
       testerInfo: {
         supervisor,
@@ -273,10 +357,15 @@ function UserProvider({ children }) {
         department,
         speciality,
       },
-      results: {
-        L1: getTestResults("L1"),
-        L2: getTestResults("L2"),
-        L3: getTestResults("L3"),
+      results,
+      overall: {
+        accuracy: overallAccuracy,
+        precision: overallPrecision,
+        recall: overallRecall,
+        f1Score: overallF1,
+        confusionMatrix: overallMatrix,
+        totalCorrect,
+        totalAnswered
       },
       rawData: testData,
     };
@@ -306,35 +395,59 @@ function UserProvider({ children }) {
       let imagePaths, correctAnswers;
 
       if (externalImagePaths && externalCorrectAnswers) {
-        // When using external data, randomly select 10 real and 10 fake images
+        // When using external data, select exactly 25 real and 25 fake images
         const realImages = externalImagePaths.filter((_, i) => externalCorrectAnswers[i]);
         const fakeImages = externalImagePaths.filter((_, i) => !externalCorrectAnswers[i]);
 
-        // Randomly select 10 from each category
-        const selectedReal = shuffleAndSelect(realImages, 10);
-        const selectedFake = shuffleAndSelect(fakeImages, 10);
+        // Ensure we have enough images of each type
+        if (realImages.length < 25 || fakeImages.length < 25) {
+          console.warn(`Not enough images for ${cellType}: ${realImages.length} real, ${fakeImages.length} fake`);
+          // Use as many as available if less than 25
+          const selectedReal = shuffleAndSelect(realImages, Math.min(25, realImages.length));
+          const selectedFake = shuffleAndSelect(fakeImages, Math.min(25, fakeImages.length));
+          
+          // Combine and shuffle the final selection
+          const allImages = [
+            ...selectedReal.map(path => ({ path, isReal: true })),
+            ...selectedFake.map(path => ({ path, isReal: false }))
+          ];
 
-        // Combine and shuffle the final selection
-        const allImages = [
-          ...selectedReal.map(path => ({ path, isReal: true })),
-          ...selectedFake.map(path => ({ path, isReal: false }))
-        ];
+          // Fisher-Yates shuffle for final order
+          for (let i = allImages.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allImages[i], allImages[j]] = [allImages[j], allImages[i]];
+          }
 
-        // Fisher-Yates shuffle for final order
-        for (let i = allImages.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [allImages[i], allImages[j]] = [allImages[j], allImages[i]];
+          // Extract paths and correct answers
+          imagePaths = allImages.map(item => item.path);
+          correctAnswers = allImages.map(item => item.isReal);
+        } else {
+          // We have enough images, select exactly 25 of each
+          const selectedReal = shuffleAndSelect(realImages, 25);
+          const selectedFake = shuffleAndSelect(fakeImages, 25);
+
+          // Combine and shuffle the final selection
+          const allImages = [
+            ...selectedReal.map(path => ({ path, isReal: true })),
+            ...selectedFake.map(path => ({ path, isReal: false }))
+          ];
+
+          // Fisher-Yates shuffle for final order
+          for (let i = allImages.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allImages[i], allImages[j]] = [allImages[j], allImages[i]];
+          }
+
+          // Extract paths and correct answers
+          imagePaths = allImages.map(item => item.path);
+          correctAnswers = allImages.map(item => item.isReal);
         }
-
-        // Extract paths and correct answers
-        imagePaths = allImages.map(item => item.path);
-        correctAnswers = allImages.map(item => item.isReal);
       } else {
-        // Fallback behavior remains unchanged
-        const realImages = Array(10)
+        // Fallback behavior - generate 50 images (25 real, 25 fake)
+        const realImages = Array(25)
           .fill(null)
           .map((_, i) => `/${cellType}/real/image_${i + 1}.jpg`);
-        const fakeImages = Array(10)
+        const fakeImages = Array(25)
           .fill(null)
           .map((_, i) => `/${cellType}/fake/image_${i + 1}.jpg`);
 
@@ -403,7 +516,7 @@ function UserProvider({ children }) {
       testData: {
         L1: {
           currentQuestion: 0,
-          answers: Array(20).fill(null),
+          answers: Array(50).fill(null),
           correctAnswers: [],
           imagePaths: [],
           comment: "",
@@ -413,7 +526,7 @@ function UserProvider({ children }) {
         },
         L2: {
           currentQuestion: 0,
-          answers: Array(20).fill(null),
+          answers: Array(50).fill(null),
           correctAnswers: [],
           imagePaths: [],
           comment: "",
@@ -423,7 +536,7 @@ function UserProvider({ children }) {
         },
         L3: {
           currentQuestion: 0,
-          answers: Array(20).fill(null),
+          answers: Array(50).fill(null),
           correctAnswers: [],
           imagePaths: [],
           comment: "",
@@ -447,11 +560,11 @@ function UserProvider({ children }) {
 
     return {
       questionNumber: currentQuestion + 1,
-      totalQuestions: 20,
+      totalQuestions: 50,
       imagePath: imagePaths[currentQuestion],
       answered: answers[currentQuestion] !== null,
       userAnswer: answers[currentQuestion],
-      progress: (currentQuestion / 20) * 100,
+      progress: (currentQuestion / 50) * 100,
     };
   };
 
