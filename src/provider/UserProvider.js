@@ -283,13 +283,24 @@ function UserProvider({ children }) {
   };
 
   // Generate test data for a specific cell type
-  // Update the generateTestData function to accept external data
   const generateTestData = (
     cellType,
     externalImagePaths = null,
     externalCorrectAnswers = null
   ) => {
     if (!userData) return;
+
+    // Check if we already have this data to prevent unnecessary updates
+    if (
+      userData.testData[cellType].imagePaths.length > 0 &&
+      userData.testData[cellType].correctAnswers.length > 0
+    ) {
+      // If we already have data for this cell type, just return it
+      return {
+        imagePaths: userData.testData[cellType].imagePaths,
+        correctAnswers: userData.testData[cellType].correctAnswers,
+      };
+    }
 
     try {
       let imagePaths, correctAnswers;
@@ -353,7 +364,7 @@ function UserProvider({ children }) {
             correctAnswers,
             currentQuestion: 0,
             answers: Array(imagePaths.length).fill(null),
-            startTime: new Date().toISOString(),
+            startTime: prev.testData[cellType].startTime || new Date().toISOString(),
             endTime: null,
             completed: false,
             comment: "",
