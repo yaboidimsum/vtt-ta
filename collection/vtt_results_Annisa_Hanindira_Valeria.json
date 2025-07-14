@@ -16,6 +16,7 @@
       "precision": 51.724137931034484,
       "recall": 60,
       "f1Score": 55.55555555555556,
+      "specificity": 44,
       "confusionMatrix": {
         "truePositives": 15,
         "trueNegatives": 11,
@@ -36,6 +37,7 @@
       "precision": 55.55555555555556,
       "recall": 60,
       "f1Score": 57.69230769230769,
+      "specificity": 52,
       "confusionMatrix": {
         "truePositives": 15,
         "trueNegatives": 13,
@@ -56,6 +58,7 @@
       "precision": 47.05882352941176,
       "recall": 64,
       "f1Score": 54.23728813559321,
+      "specificity": 28,
       "confusionMatrix": {
         "truePositives": 16,
         "trueNegatives": 7,
@@ -74,6 +77,7 @@
     "precision": 51.11111111111111,
     "recall": 61.33333333333333,
     "f1Score": 55.75757575757576,
+    "specificity": 41.33333333333333,
     "confusionMatrix": {
       "truePositives": 46,
       "trueNegatives": 31,
